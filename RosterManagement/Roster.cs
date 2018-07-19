@@ -20,6 +20,20 @@ namespace RosterManagement
         /// <param name="wave">Refers to the Wave number</param>
         public void Add(string cadet, int wave)
         {
+            List<string> list;
+            if (!_roster.ContainsKey(wave))
+            {
+                list = new List<string>();
+                list.Add(cadet);
+                _roster.Add(wave, list);
+            }
+            else
+            {
+                list = _roster[wave];
+                list.Add(cadet);
+                _roster[wave] = list;
+            }
+            
         }
 
         /// <summary>
@@ -29,7 +43,17 @@ namespace RosterManagement
         /// <returns>List of Cadet's Name</returns>
         public List<string> Grade(int wave)
         {
-            var list = new List<string>();
+            List<string> list = new List<string>();
+            try
+            {
+                list = _roster[wave];
+                list.Sort();
+            }
+            catch(KeyNotFoundException e)
+            {
+                Console.WriteLine(e);
+            }
+
             return list;
         }
 
@@ -40,7 +64,23 @@ namespace RosterManagement
         public List<string> Roster()
         {
             var cadets = new List<string>();
-            return cadets;
+
+            List<int> list = new List<int>();
+
+            foreach (KeyValuePair<int, List<string>> entry in _roster)
+            {
+                list.Add(entry.Key);
+            }
+            list.Sort();
+
+            foreach (int a in list)
+            {
+                List<String> listOfCadetsInAWave = _roster[a];
+                listOfCadetsInAWave.Sort();
+                cadets.AddRange(listOfCadetsInAWave);
+            }
+            
+            return cadets.ToList();
         }
     }
 }
